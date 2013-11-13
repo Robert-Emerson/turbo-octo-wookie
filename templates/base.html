@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,600,700,900" rel="stylesheet" />
+    <link href="../static/default.css" rel="stylesheet" type="text/css" media="all" />
+    <link href="../static/fonts.css" rel="stylesheet" type="text/css" media="all" />
+
+    <!--[if IE 6]><link href="default_ie6.css" rel="stylesheet" type="text/css" /><![endif]-->
+    <title>{{ title }} - Robert Emerson</title>
+</head>
+<body>
+    <div id="header-wrapper">
+        <div id="header" class="container">
+            <div id="menu">
+                <ul>
+                    {% for item in navigation %}
+                        {% if item.caption == title %}
+                            <li class="current_page_item"><a href="{{ item.href }}">{{ item.caption }}</a></li>
+                        {% else %}
+                             <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div id="logo">
+                <h1><a>{{ title }}</a></h1>
+                <h2><a>{{ subtitle }}</a></h2>
+            </div>
+        </div>
+    </div>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        <p>Copyright (c) 2013 <a>robert emerson</a> | Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>.</p>.
+        {% endblock %}
+    </div>
+</body>
