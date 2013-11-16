@@ -1,0 +1,7 @@
+# Compiled files
+########################
+*.pyc
+*.xml
+*.iml
+.idea/**/*
+.coverage
