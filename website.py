@@ -2,6 +2,7 @@ __author__ = 'robert emerson'
 
 #imports
 from flask import Flask, render_template
+import web_methods
 
 #configuration
 recipe_categories = ['Appetizers', 'Main Dishes', 'Side Dishes', 'Desserts', 'All']
@@ -35,10 +36,11 @@ def category(name):
     title = str.replace(name, '_', " ").capitalize()
     if name == '' or str.lower(name) == 'all':
         subtitle = "All"
-
+        recipes = web_methods.get_recipes('*')
         return render_template('recipe.html', navigation=navigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes)
     else:
         subtitle = name
+        recipes = web_methods.get_recipes(name)
         return render_template('recipe.html', navigation=navigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes)
 
 
