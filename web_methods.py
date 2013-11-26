@@ -16,21 +16,21 @@ def close_db(db_connection):
     db_connection.close()
 
 
-#TODO move to stored procedure
 def user_login(username, password):
     db = connect_db('cs4750roe2pjb', 'PASSWORD')
     db_cursor = db.cursor()
     username = db.escape_string(username)
     args = [username]
-    db_cursor.callproc("cs4750roe2pj.login_user", (args, ))
+    db_cursor.callproc("cs4750roe2pj.login_user", args)
     db.commit()
     result = db_cursor.fetchone()
-    db.close()
     if not result:
         return False
-    db_pass = result[0]
-    db_salt = result[1]
+    db_pass = result[1]
+    db_salt = result[3]
     if password_hash(password + db_salt) == db_pass:
+        db_cursor.close()
+        db.close()
         return True
     return False
 
@@ -40,7 +40,6 @@ def user_create(username, password, email):
     password = password_hash(password + salt)
     db = connect_db('cs4750roe2pja', 'PASSWORD')
     db_cursor = db.cursor()
-    username = db.escape_string(username)
 
     username = db.escape_string(username)
     password = db.escape_string(password)
@@ -49,14 +48,15 @@ def user_create(username, password, email):
     args = [username, password, email, salt]
     retval = False
     try:
-        db_cursor.callproc("cs4750roe2pj.register_user", (args,) )
+        db_cursor.callproc("cs4750roe2pj.register_user", args)
         db.commit()
         retval = True
-    except pymysql.IntegrityError:
+    except Exception as e:
         """ User already in database"""
-        print('User already in database')
+        print e.message
         pass
     finally:
+        db_cursor.close()
         db.close()
         return retval
 
@@ -64,6 +64,7 @@ def user_create(username, password, email):
 def password_hash(password):
     """Returns a hex format hash of the input password. Input password should contain salt already."""
     return hashlib.sha512(password).hexdigest()
+
 
 def main():
     val0 = user_create('test', 'user', 'nope@nope.com')
