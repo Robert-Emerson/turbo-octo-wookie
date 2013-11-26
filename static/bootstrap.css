@@ -1922,8 +1922,8 @@ output {
 }
 
 .form-control {
-  display: block;
-  width: 100%;
+  display: inline;
+  width: auto;
   height: 34px;
   padding: 6px 12px;
   font-size: 14px;

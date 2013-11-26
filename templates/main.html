@@ -2,7 +2,7 @@
 <html lang="en">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <link href="../static/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/bootstrap.css" rel="stylesheet">
     <link href="../static/bootstrap-theme.min.css" rel="stylesheet">
     <link href="../static/main.css" rel="stylesheet">
     <title>{{ title }} - Robert Emerson</title>
@@ -20,11 +20,12 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">Recipe Project</a>
+        <a class="navbar-brand" href="/">Breadlosers</a>
       </div>
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
           <li class="active"><a href="/">Home</a></li>
+            <li ><a href="/">Ingredients</a></li>
           <li class="dropdown">
             <a href="" class="dropdown-toggle" data-toggle="dropdown">Recipe Categories <b class="caret"></b></a>
             <ul class="dropdown-menu">
@@ -41,15 +42,30 @@
   <!-- Begin page content -->
   <div class="container">
     <div class="page-header">
-      <h1>Sticky footer with fixed navbar</h1>
+      <h1>Breadlosers</h1>
+    <h3> A Fresh Approach to Culinary Success</h3>
     </div>
-    <p class="lead">Pin a fixed-height footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A fixed navbar has been added within <code>#wrap</code> with <code>padding-top: 60px;</code> on the <code>.container</code>.</p>
-    <p>Back to <a href="../sticky-footer">the default sticky footer</a> minus the navbar.</p>
+    <p class="lead">Built for CS 4750 @ UVa. This is a web application that allows users to view, rate, and comment on recipes.</p>
+    <p class="lead">Enter a search term in the box below and click enter. Feel free to select a different category if you want to search by that instead.</p>
+
+    <ul class="nav nav-pills">
+        <form class="navbar-search pull-left">
+          <input type="text" class="form-control" placeholder="Search">
+        </form>
+
+        <select class="form-control" form="searchSelect">
+            <option value="Recipes">Recipes</option>
+            <option value="Ingredients">Ingredients</option>
+            <option value="Everything">Everything</option>
+        </select>
+      <button class="btn btn-primary">Go!</button>
+    </ul><div class="col-md-4"></div>
+
   </div>
 </div>
 
 <div id="footer">
   <div class="container">
-    <p class="text-muted credit">Recipe Project - Robert Emerson - UVA CS 4750 Database Systems. Built with <a href='http://getbootstrap.com'> Bootstrap</a>.</p>
+    <p class="text-muted credit">Recipe Project - Robert Emerson - UVa CS 4750 Database Systems. Built with <a href='http://getbootstrap.com'> Bootstrap</a>.</p>
   </div>
 </div>

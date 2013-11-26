@@ -7,12 +7,13 @@ CREATE TABLE IF NOT EXISTS users
 	(username varchar(30),
 	password varchar(255),
 	email varchar(255),
+	salt varchar(255),
 	PRIMARY KEY (username));
 	
 CREATE TABLE IF NOT EXISTS ingredients
-	(ingredient_id int AUTO_INCREMENT,
-	ingredient_name varchar(30),
-	PRIMARY KEY (ingredient_id));
+	(ingredient_name varchar(30),
+	ingredient_description varchar (200),
+	PRIMARY KEY (ingredient_name));
 	
 CREATE TABLE IF NOT EXISTS recipe_types
 	(recipe_type varchar(20),
@@ -26,17 +27,16 @@ CREATE TABLE IF NOT EXISTS recipe_is
 	FOREIGN KEY(recipe_type) REFERENCES recipe_types(recipe_type));
 	
 CREATE TABLE IF NOT EXISTS instructions
-	(instruction_id int(11),
+	(instruction_id int(11) AUTO_INCREMENT,
 	recipe_id int,
 	instruction_text varchar(500),
-	PRIMARY KEY (instruction_id, recipe_id),
-	FOREIGN KEY(recipe_id) REFERENCES recipes(recipe_id));
+	PRIMARY KEY (instruction_id)) engine=MyISAM;
 	
 CREATE TABLE IF NOT EXISTS ingredients_used
 	(recipe_id int AUTO_INCREMENT,
-	ingredient_id int,
+	ingredient_name varchar(30),
 	measurement varchar(20),
-	PRIMARY KEY(recipe_id, ingredient_id),
+	PRIMARY KEY(recipe_id, ingredient_name),
 	FOREIGN KEY(recipe_id) REFERENCES recipes(recipe_id),
 	FOREIGN KEY(ingredient_id) REFERENCES ingredients(ingredient_id));
 	
@@ -63,3 +63,7 @@ CREATE TABLE IF NOT EXISTS favorites
 	PRIMARY KEY(username, recipe_id),
 	FOREIGN KEY(username) REFERENCES users(username),
 	FOREIGN KEY(recipe_id) REFERENCES recipes(recipe_id));
+
+GRANT SELECT ON users TO 'cs4750roe2pja'@'%';	
+GRANT INSERT ON users TO 'cs4750roe2pjb'@'%';
+	

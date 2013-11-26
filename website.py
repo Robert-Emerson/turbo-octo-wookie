@@ -2,10 +2,8 @@ __author__ = 'robert emerson'
 
 #imports
 from flask import Flask, render_template
-import MySQLdb
 
 #configuration
-DATABASE =  MySQLdb.connect(host="stardock.cs.virginia.edu", user="cs4750roe2pj", passwd="NOT_MY_PASSWORD", db="cs4750roe2pj")
 recipe_categories = ['Appetizers', 'Main Dishes', 'Side Dishes', 'Desserts', 'All']
 
 # create our little application :)
@@ -28,16 +26,16 @@ def recipe(name):
     navigation = buildNavigation()
     title = str.replace(recipe, '_', " ").capitalize()
     subtitle = ""
-    return render_template('recipe.html', navigation=navigation, title=title, subtitle=subtitle, recipe = title, recipes=recipes)
+    return render_template('recipe.html', navigation=navigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes)
 
 @app.route('/categories/<name>')
 def category(name):
-    recipes = {'apps': ['app1', 'app2', 'app3'], 'mains': ['main1', 'main2', 'main3']}
     name = name.encode('utf8')
     navigation = buildNavigation()
     title = str.replace(name, '_', " ").capitalize()
     if name == '' or str.lower(name) == 'all':
         subtitle = "All"
+
         return render_template('recipe.html', navigation=navigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes)
     else:
         subtitle = name
