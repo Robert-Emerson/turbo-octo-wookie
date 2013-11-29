@@ -2,12 +2,13 @@
 <html lang="en">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <link href="../static/bootstrap.min.css" rel="stylesheet">
-    <link href="../static/bootstrap-theme.min.css" rel="stylesheet">
-    <link href="../static/main.css" rel="stylesheet">
+    <link href="../../static/bootstrap.css" rel="stylesheet">
+    <link href="../../static/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="../../static/main.css" rel="stylesheet">
     <title>{{ title }} - Robert Emerson</title>
     <script src="http://codeorigin.jquery.com/jquery-1.10.2.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
 </head>
 <!-- Wrap all page content here -->
 <div id="wrap">
@@ -18,25 +19,26 @@
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
           <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">Recipe Project</a>
+        <a class="navbar-brand" href="/">Breadlosers</a>
       </div>
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/">Home</a></li>
+            <li ><a href="/ingredients/">Ingredients</a></li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Recipe Categories <b class="caret"></b></a>
+            <a href="" class="dropdown-toggle" data-toggle="dropdown">Recipe Categories <b class="caret"></b></a>
             <ul class="dropdown-menu">
-               {% for item in navigation %}
-                    {% if item.caption == title %}
-                        <li class="active"><a href="{{ item.href }}">{{ item.caption }}</a></li>
-                    {% else %}
-                         <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
-                    {% endif %}
-                {% endfor %}
+              {% for item in navigation %}
+                <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
+              {% endfor %}
             </ul>
           </li>
         </ul>
+<ul class="nav pull-right">
+        <li ><a href="/{{log_action}}">{{ log_action }}</a></li>
+      </ul>
       </div><!--/.nav-collapse -->
     </div>
   </div>
@@ -44,15 +46,50 @@
   <!-- Begin page content -->
   <div class="container">
     <div class="page-header">
-      <h1>{{recipe}}</h1>
+      <h1>{{title}}</h1>
+      <h3> Favorited {{ comments[0] }} times </h3><form action="/favorite/" method="post"><input name="name" type="hidden" value="{{ title }}"> <input type="submit" value="Favorite This"><input name="recipe_id" type="hidden" value="{{comments[2] }}" /></form>
+      <h3> Average rating - {{ comments[3] }}/5 </h3>
     </div>
-      {% for item in recipes.keys() %}
-        <p class="lead">{{item}}</p>
-        {% for value in recipes[item] %}
-          <p>{{value}}</p>
+    <div class="row">
+        {% for picture in pictures %}
+        <div class="col-md-4">
+          <img src="{{ picture }}" height="200">
+        </div>
         {% endfor %}
-      {% endfor %}
-  </div>
+    </div>
+      <br>
+    {% for item in ingredients %}
+      <li>{{item}}</li>
+    {% endfor %}
+      <br>
+    {% for instruction in instructions %}
+      <p>{{instruction}}</p>
+    {% endfor %}
+      <hr />
+      <p class="lead">Rate & Comment:</p>
+        <form action="/comments/" method="post">
+            <select name="rating">
+            <option>-1</option>
+            <option>0</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            </select> <br/>
+        <textarea name="commenttext" rows="4" cols="50"></textarea><br />
+        <input name="recipe_id" type="hidden" value="{{comments[2] }}" />
+        <input name="name" type="hidden" value="{{ title }}" />
+        <input type="submit" value="Submit" />
+        </form>
+      <hr />
+        {% for comment in comments[1] %}
+        <div>
+            <p>{{comment[0] }} wrote:</p>
+            <textarea rows="4" cols="50" readonly>{{ comment[1]}}</textarea><br />
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 <div id="footer">
