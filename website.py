@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, sen
 from flask.ext.login import LoginManager, login_user, logout_user, current_user, login_required
 import web_methods
 import User
+import collections
 
 # create our little application
 app = Flask(__name__)
@@ -13,26 +14,28 @@ app.secret_key = "NOT ALL THAT SECRET REALLY"
 login_manager = LoginManager()
 login_manager.init_app(app)
 recipe_categories = web_methods.get_categories()
-navigation = web_methods.buildNavigation(recipe_categories)
+pynavigation = web_methods.buildNavigation(recipe_categories)
 recipe_cache = {}
 
 @app.route('/')
 def index():
+    new_nav = []
+    for k in pynavigation:
+        new_nav.append(k)
     if current_user.get_id() == 'admin':
-        navigation.append(web_methods.NavigationItem('Export'))
+        new_nav.append(web_methods.NavigationItem('Export'))
     log_action = 'Login'
     if current_user.is_authenticated():
         log_action = 'Logout'
     title = 'Home'
     subtitle = ""
-    return render_template('main.html', navigation=navigation, title=title, subtitle=subtitle, log_action=log_action)
+    return render_template('main.html', navigation=new_nav, title=title, subtitle=subtitle, log_action=log_action)
 
 
 @app.route('/recipes/<name>/<recipe_id>')
 def recipe(name, recipe_id):
     log_action = 'Login'
     if current_user.is_authenticated():
-        navigation.append(web_methods.NavigationItem("New Recipe"))
         log_action = 'Logout'
     name = name.encode('utf8')
     title = str.replace(name, '_', " ")
@@ -45,16 +48,16 @@ def recipe(name, recipe_id):
         recipe_cache[name + str(recipe_id)] = recipe
     finally:
         comments = web_methods.load_comments(recipe_id)
-        return render_template('recipe.html', navigation=navigation, title=title, ingredients=recipe[0], instructions=recipe[1], pictures=recipe[2], log_action=log_action, comments=comments)
+        return render_template('recipe.html', navigation=pynavigation, title=title, ingredients=recipe[0], instructions=recipe[1], pictures=recipe[2], log_action=log_action, comments=comments)
 
 
-@app.route('/export/')
+@app.route('/export/', methods=['GET'])
 def export_data():
     if current_user.get_id() != 'admin':
         return redirect(url_for('index'))
     else:
         web_methods.build_export_file(app.root_path)
-        send_from_directory(app.root_path, 'breadlosers.xml')
+        return send_from_directory(app.root_path, 'breadlosers.datafilexml')
 
 @app.route('/comments/', methods=['POST'])
 def create_comment():
@@ -88,7 +91,7 @@ def search():
     else:
         title = "Recipes with " + search_string
         recipes = web_methods.search_text(search_string)
-    return render_template('categories.html', navigation=navigation, title=title, subtitle="", recipe=title, recipes=recipes, log_action=log_action)
+    return render_template('categories.html', navigation=pynavigation, title=title, subtitle="", recipe=title, recipes=recipes, log_action=log_action)
 
 
 @app.route('/create_user/', methods=['GET', 'POST'])
@@ -102,7 +105,7 @@ def create_user():
         if web_methods.user_create(username, password, email):
             flash("You have registered")
             return redirect(next or url_for('index', error=error))
-    return render_template('create_user.html', login=True, next=next, error=error, navigation=navigation, title="Register")
+    return render_template('create_user.html', login=True, next=next, error=error, navigation=pynavigation, title="Register")
 
 @app.route('/favorite/', methods=['POST'])
 def create_favorite():
@@ -124,8 +127,9 @@ def ingredients():
     if current_user.is_authenticated():
         log_action = 'Logout'
     ingredients = web_methods.get_ingredients()
+    od_ingredients = collections.OrderedDict(sorted(ingredients.items()))
     title = "Ingredients"
-    return render_template('ingredients.html', navigation=navigation, title=title, ingredients=ingredients, log_action=log_action)
+    return render_template('ingredients.html', navigation=pynavigation, title=title, ingredients=od_ingredients, log_action=log_action)
 
 @app.route('/categories/<name>')
 def category(name):
@@ -138,12 +142,12 @@ def category(name):
         subtitle = "All"
         #expectes recipes to be dictionary with category - recipe title pairs
         recipes = web_methods.get_recipes('*')
-        return render_template('categories.html', navigation=navigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes, log_action=log_action)
+        return render_template('categories.html', navigation=pynavigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes, log_action=log_action)
     else:
         subtitle = name
         recipes = web_methods.get_recipes(name)
 
-        return render_template('categories.html', navigation=navigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes, log_action=log_action)
+        return render_template('categories.html', navigation=pynavigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes, log_action=log_action)
 
 
 @app.errorhandler(404)
@@ -172,7 +176,7 @@ def login():
                     flash("You have logged in")
                     return redirect(next or url_for('index', error=error))
         error = "Login failed"
-    return render_template('login.html', login=True, next=next, error=error, navigation=navigation, title="Login")
+    return render_template('login.html', login=True, next=next, error=error, navigation=pynavigation, title="Login")
 
 
 @app.route('/logout')

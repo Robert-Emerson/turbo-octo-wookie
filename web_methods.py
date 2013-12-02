@@ -4,10 +4,11 @@ import uuid
 import os
 
 __author__ = 'robert'
-
+passwords = {}
 
 
 def connect_db(user, password):
+    password = passwords[user]
     db_connection = pymysql.connect(host="stardock.cs.virginia.edu", user=user, passwd=password, db="cs4750roe2pj")
     return db_connection
 
@@ -82,6 +83,7 @@ def get_recipes(name):
     retval = {}
     db = connect_db('cs4750roe2pjc', 'PASSWORD')
     db_cursor = db.cursor()
+    name = str(name).replace('_', ' ').capitalize()
     try:
         name = db.escape_string(name)
         db_cursor.execute("SELECT recipe_id, name FROM recipes NATURAL JOIN recipe_is WHERE recipe_type = %s;", name)
@@ -158,13 +160,13 @@ def load_comments(recipe_id):
         db.close()
         return (num_favorites,comments,recipe_id, avg_rating)
 
-#TODO DIFFERENT DB USER
+
 def insert_comment(username, recipe_id, comment_text, rating):
     recipe_id = str(recipe_id)
     comment_text = str(comment_text)
     rating = str(rating)
     username = str(username)
-    db = connect_db('cs4750roe2pj', 'PASSOWRD')
+    db = connect_db('cs4750roe2pja', 'PASSOWRD')
     db_cursor = db.cursor()
     try:
         recipe_id = db.escape_string(recipe_id)
@@ -180,11 +182,11 @@ def insert_comment(username, recipe_id, comment_text, rating):
         db_cursor.close()
         db.close()
 
-#TODO different db user
+
 def insert_favorite(username, recipe_id):
     recipe_id = str(recipe_id)
     username = str(username)
-    db = connect_db('cs4750roe2pj', 'PASSWROD')
+    db = connect_db('cs4750roe2pja', 'PASSWROD')
     db_cursor = db.cursor()
     try:
         recipe_id = db.escape_string(recipe_id)
@@ -250,6 +252,8 @@ def search_text(search_string):
         db.commit()
         values = db_cursor.fetchall()
         for val in values:
+            retval[search_string] = []
+        for val in values:
             link = '/recipes/' + str(val[1]).replace(' ', '_') + '/' + str(val[0])
             retval[search_string].append((val[1], link))
     except Exception as e:
@@ -265,10 +269,13 @@ def get_ingredients():
     db = connect_db('cs4750roe2pjc', 'PASSWORD')
     db_cursor = db.cursor()
     try:
-        db_cursor.execute("SELECT * FROM ingredients;")
+        db_cursor.execute("SELECT * FROM ingredients ORDER BY ingredient_name DESC;")
         db.commit()
         for val in db_cursor.fetchall():
-            retval[val[0]] = val[1]
+            if val[1]:
+                retval[val[0]] = val[1]
+            else:
+                retval[val[0]] = 'No description available'
     except Exception as e:
         print e.message
     finally:
@@ -276,16 +283,19 @@ def get_ingredients():
         db.close()
         return retval
 
-def get_recipes():
+def get_recipes2():
     retval = {}
     ingredient = {}
+    for i in range(1, 25):
+        ingredient[i] = []
     val = []
     db = connect_db('cs4750roe2pjc', 'PASSWORD')
     db_cursor = db.cursor()
     try:
         db_cursor.execute("SELECT * FROM recipes NATURAL JOIN instructions NATURAL JOIN ingredients_used;")
         db.commit()
-        val.append(db_cursor.fetchall())
+        for item in db_cursor.fetchall():
+            val.append(item)
         while val:
             current_row = val.pop()
             ingredient[current_row[0]].append((current_row[3], current_row[4]))
@@ -297,11 +307,41 @@ def get_recipes():
         db.close()
         return retval
 
+def get_users():
+    retval = {}
+    db = connect_db('cs4750roe2pja', 'PASSOWRD')
+    db_cursor = db.cursor()
+    try:
+        db_cursor.execute("SELECT * FROM users;")
+        db.commit()
+        for item in db_cursor.fetchall():
+            retval[item[0]] = (item[1], item[2], item[3])
+    except Exception as e:
+        print e.message
+    finally:
+        db_cursor.close()
+        db.close()
+        return retval
+
+
 def build_export_file(cur_directory):
-    descriptor = os.path.join(cur_directory, 'breadlosers.xml')
+    descriptor = os.path.join(cur_directory, 'breadlosers.datafilexml')
+    ingredients_list = get_ingredients()
+    recipes = get_recipes2()
     with open(descriptor, 'w') as exportFile:
-        ingredients_list = get_ingredients()
-        recipe = get_recipes()
+        for ingredient in ingredients_list:
+            write_string = '<ingredient>\n\t<ingredient_name> ' + ingredient + ' </ingredient_name>\n'
+            write_string += '\t<ingredient_description> ' + ingredients_list[ingredient] + ' </ingredient_description>\n</ingredient>\n'
+            exportFile.write(write_string)
+        for recipe in recipes.iterkeys():
+            write_string = '<recipe>\n'
+            write_string += '\t<recipe_name> ' + recipes[recipe][0] + ' </recipe_name>\n'
+            for ingredient_used in recipes[recipe][2]:
+                write_string += '\t\t<ingredient_used> ' + ingredient_used[0] + ' <measurement> ' + ingredient_used[1]
+                write_string += '</measurement> </ingredient_used>\n'
+            write_string += '\t\t<instructions> ' + recipes[recipe][1] + ' </instruction>\n'
+            write_string += '</recipe>\n'
+            exportFile.write(write_string)
 
 
 

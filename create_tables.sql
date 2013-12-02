@@ -69,6 +69,8 @@ GRANT SELECT ON users TO 'cs4750roe2pja'@'%';
 GRANT SELECT ON comments TO 'cs4750roe2pja'@'%';
 GRANT SELECT ON recipes TO 'cs4750roe2pja'@'%';
 GRANT SELECT ON favorites TO 'cs4750roe2pja'@'%';
+GRANT INSERT ON comments TO 'cs4750roe2pjb'@'%';
+GRANT INSERT ON favorites TO 'cs4750roe2pjb'@'%';
 
 GRANT INSERT ON users TO 'cs4750roe2pjb'@'%';
 

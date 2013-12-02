@@ -1,10 +1,3 @@
---Must change delimiter in phpMyAdmin to $$ before executing
-
-DROP TRIGGER IF EXISTS recipe_added$$
-CREATE TRIGGER `recipe_added` AFTER INSERT ON `recipes` 
-FOR EACH ROW 
-INSERT INTO instructions (instruction_id, recipe_id) values (DEFAULT, NEW.recipe_id)$$
-
 DROP PROCEDURE IF EXISTS cs4750roe2pj.register_user$$
 CREATE PROCEDURE cs4750roe2pj.register_user (
     IN username varchar(30),
