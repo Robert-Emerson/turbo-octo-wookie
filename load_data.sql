@@ -70,7 +70,19 @@ INSERT INTO cs4750roe2pj.instructions (recipe_id, instruction_text) VALUES (@nex
 Fresh rosemary can be used as a garnish.
 Recipe and images from http://www.smittenkitchen.com');
 
-INSERT INTO cs4750roe2pj.ingredients (ingredient_name, ingredient_description) VALUES ('olive oil', ''), ('potato(es)', ''), ('onion(s)', '');
+INSERT INTO cs4750roe2pj.ingredients (ingredient_name, ingredient_description) VALUES ('olive oil', 'Olives blood. Comes in several grades, with extra virgin being the most flavorful.'), ('potato(es)', ''), ('onion(s)', '');
 INSERT INTO cs4750roe2pj.ingredients_used (recipe_id, ingredient_name, measurement) VALUES (@next_id, 'all-purpose flour', '3 cups'), (@next_id, 'salt', '1 1/2 teaspoons'), (@next_id, 'sugar', '3/4 teaspoon'), (@next_id, 'yeast', '1 teaspoon'), (@next_id, 'potato(es)', '2 thinly sliced'), (@next_id, 'onion(s)', '1/2 diced'), (@next_id, 'olive oil', '4 tablespoons + a bit');
 INSERT INTO cs4750roe2pj.recipe_is (recipe_id, recipe_type) VALUES (@next_id, 'Main Dishes');
 INSERT INTO cs4750roe2pj.recipe_pictures (recipe_id, picture_url) VALUES (@next_id, 'http://farm4.static.flickr.com/3049/2550232260_a828451cca.jpg'), (@next_id, 'http://farm4.static.flickr.com/3107/2550240418_4580f2be05.jpg');
+
+
+SET @next_id = (SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA='cs4750roe2pj' AND TABLE_NAME='recipes');
+INSERT INTO cs4750roe2pj.recipes (name) VALUES ('Balsamic Braised Brussels with Pancetta');
+INSERT INTO cs4750roe2pj.instructions (recipe_id, instruction_text) VALUES (@next_id, 'Heat oven to 350 degrees. In a bowl, mix bread crumbs and thyme with a couple glugs of olive oil, and spread on a cookie sheet. Toast, tossing frequently, until golden brown, 10 to 12 minutes.
+Heat butter and remaining olive oil in a large skillet over medium-high heat until foamy. Add brussels sprouts, sprinkle with salt and pepper, and sauté, tossing frequently, until lightly browned, about 7 to 10 minutes. Add diced pancetta, and sauté, tossing frequently, until sprouts are well browned and softened slightly, and pancetta is crisp, about 10 to 15 minutes more. Reduce heat, add shallots and garlic, and sauté until fragrant, 2 minutes.
+Increase heat to high, add balsamic vinegar and stock, and cook, tossing frequently, until sprouts are glazed and tender, about 20 minutes; add more stock if needed. Taste, adjusting seasoning if necessary, and sprinkle with chopped parsley. Transfer to a warm serving bowl and scatter bread crumbs on top.
+Recipe and images from http://www.smittenkitchen.com');
+
+INSERT INTO cs4750roe2pj.ingredients (ingredient_name, ingredient_description) VALUES ('bread crumbs', 'Bread, turned into little bits.'), ('thyme', 'An herb I wish I had more of.'), ('brussels sprouts', 'Little cabbages. Or something like that anyways.'), ('pancetta', 'Like bacon, but somehow even better.'), ('shallots', 'What looks like a small onion, but has a taste in between garlic and an onion? A shallot!'), ('garlic', 'Keeps the vampires away.'), ('balsamic vinegar', 'One of two reasons people care about Modena, even if most balsamic vinegar for sale is a lie.'), ('chicken stock', ''), ('parsley', 'A species of Petroselinum in the family Apiaceae, native to the central Mediterranean region (southern Italy, Algeria, and Tunisia), naturalized elsewhere in Europe, and widely cultivated as an herb, a spice, and a vegetable. (Credit Wikipedia)');
+INSERT INTO cs4750roe2pj.ingredients_used (recipe_id, ingredient_name, measurement) VALUES (@next_id, 'bread crumbs', '1 1/2 cups'), (@next_id, 'thyme', '2 teaspoons'), (@next_id, 'olive oil', '2 tablespoons + a bit'), (@next_id, 'unsalted butter', '4 tablespoons'), (@next_id, 'brussels sprouts', '2 pounds'), (@next_id, 'pancetta', '1 1/2 cups diced'), (@next_id, 'shallots', '3 tablespoons minced'), (@next_id, 'garlic', '1 tablespoons minced'), (@next_id, 'balsamic vinegar', '1/2 cup'), (@next_id, 'chicken stock', '1 1/2 cups'), (@next_id, 'parsley', '2 tablespoons chopped');
+INSERT INTO cs4750roe2pj.recipe_is (recipe_id, recipe_type) VALUES (@next_id, 'Side Dishes'), (@next_id, 'Appetizers');

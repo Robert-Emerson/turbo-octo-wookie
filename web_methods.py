@@ -6,7 +6,6 @@ import os
 __author__ = 'robert'
 passwords = {}
 
-
 def connect_db(user, password):
     password = passwords[user]
     db_connection = pymysql.connect(host="stardock.cs.virginia.edu", user=user, passwd=password, db="cs4750roe2pj")
@@ -200,6 +199,25 @@ def insert_favorite(username, recipe_id):
         db_cursor.close()
         db.close()
 
+def view_favorites(username):
+    retval = {}
+    db = connect_db('cs4750roe2pja', 'PASSWORD')
+    db_cursor = db.cursor()
+    name = str(username)
+    try:
+        name = db.escape_string(name)
+        db_cursor.execute("SELECT recipe_id, name FROM recipes NATURAL JOIN favorites WHERE username = %s;", name)
+        db.commit()
+        retval[name] = []
+        for val in db_cursor.fetchall():
+            link = '/recipes/' + str(val[1]).replace(' ', '_') + '/' + str(val[0])
+            retval[name].append((val[1], link))
+    except Exception as e:
+        print e.message
+    finally:
+        db_cursor.close()
+        db.close()
+        return retval
 
 def search_recipes(search_string):
     retval = {}
@@ -328,6 +346,7 @@ def build_export_file(cur_directory):
     descriptor = os.path.join(cur_directory, 'breadlosers.datafilexml')
     ingredients_list = get_ingredients()
     recipes = get_recipes2()
+    users = get_users()
     with open(descriptor, 'w') as exportFile:
         for ingredient in ingredients_list:
             write_string = '<ingredient>\n\t<ingredient_name> ' + ingredient + ' </ingredient_name>\n'
@@ -342,7 +361,14 @@ def build_export_file(cur_directory):
             write_string += '\t\t<instructions> ' + recipes[recipe][1] + ' </instruction>\n'
             write_string += '</recipe>\n'
             exportFile.write(write_string)
-
+        for user in users.iterkeys():
+            write_string = '<user>\n'
+            write_string += '\t<username> ' + user + ' </username>\n'
+            write_string += '\t<email> ' + users[user][1] + ' </email>\n'
+            write_string += '\t<password> ' + users[user][0] + ' </password>\n'
+            write_string += '\t<salt> ' + users[user][2] + ' </salt>\n'
+            write_string += '</user>\n'
+            exportFile.write(write_string)
 
 
 def password_hash(password):
@@ -365,6 +391,8 @@ class NavigationItem:
             self.href = '../'
         elif captionIn == 'Export':
             self.href = '/export/'
+        elif captionIn == 'My Favorites':
+            self.href = '/my_favorites/'
         else:
             self.href = '/categories/' + str.replace(captionIn, " ", "_").lower()
         self.caption = captionIn

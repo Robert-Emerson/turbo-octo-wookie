@@ -22,6 +22,7 @@ def index():
     new_nav = []
     for k in pynavigation:
         new_nav.append(k)
+    new_nav.append(web_methods.NavigationItem('My Favorites'))
     if current_user.get_id() == 'admin':
         new_nav.append(web_methods.NavigationItem('Export'))
     log_action = 'Login'
@@ -149,6 +150,15 @@ def category(name):
 
         return render_template('categories.html', navigation=pynavigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes, log_action=log_action)
 
+@app.route('/my_favorites/')
+def favorites():
+    if current_user.is_authenticated():
+        log_action = 'Logout'
+        name = str(current_user.get_id())
+        title = str.replace(name, '_', " ").capitalize()
+        subtitle = name
+        recipes = web_methods.view_favorites(name)
+        return render_template('categories.html', navigation=pynavigation, title=title, subtitle=subtitle, recipe=title, recipes=recipes, log_action=log_action)
 
 @app.errorhandler(404)
 def page_not_found(error):
